@@ -1,0 +1,53 @@
+{
+ "p01": {
+  "desc": "Child asks an adult about a dream; adult answers with a condition",
+  "parsed": {
+   "panels": [
+    {
+     "content": "Child runs to the stairs and calls out; adult turns from the staircase",
+     "bubbles": [
+      {"type": "speech", "speaker": "child",
+       "text": "お母さん！", "text_ja": "お母さん！", "text_ja_kana": "おかあさん！"},
+      {"type": "speech", "speaker": "adult",
+       "text": "どうしたの？", "text_ja": "どうしたの？", "text_ja_kana": "どうしたの？"}
+     ]
+    },
+    {
+     "content": "Child holds up a picture book, excited",
+     "bubbles": [
+      {"type": "speech", "speaker": "child",
+       "text": "大きくなったら冒険に出るんだ！",
+       "text_ja": "大きくなったら冒険に出るんだ！",
+       "text_ja_kana": "おおきくなったらぼうけんにでるんだ！"}
+     ]
+    },
+    {
+     "content": "Adult sits alone at the table, chin on hand, speaking gently",
+     "bubbles": [
+      {"type": "speech", "speaker": "adult",
+       "text": "あら、じゃあまずは練習を頑張らないとね。",
+       "text_ja": "あら、じゃあまずは練習を頑張らないとね。",
+       "text_ja_kana": "あら、じゃあまずはれんしゅうをがんばらないとね。"}
+     ]
+    },
+    {
+     "content": "Child asks a follow-up; adult's back fills the left foreground",
+     "bubbles": [
+      {"type": "speech", "speaker": "child",
+       "text": "それで世界を旅できるの？",
+       "text_ja": "それで世界を旅できるの？",
+       "text_ja_kana": "それでせかいをたびできるの？"}
+     ]
+    },
+    {
+     "content": "Adult closes her eyes and pats the child's head (no dialogue)",
+     "bubbles": [
+      {"type": "sfx", "speaker": null,
+       "text": "そっと撫でる", "text_ja": "そっと撫でる",
+       "text_ja_kana": "そっとなでる"}
+     ]
+    }
+   ]
+  }
+ }
+}
