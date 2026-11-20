@@ -6,6 +6,44 @@
 
 这套 skill 把这些错误逐条写成**可执行的约束**：每条规则附失败案例、判定方法和验收方式。先读懂，再生成。
 
+---
+
+## English summary
+
+A constraint layer for turning manga into animation.
+
+Video models can draw, but they cannot read manga. They mis-assign dialogue, voice
+sound effects, merge a character's child and adult forms, infer hair color from
+grayscale pages, and silently drop panels to fit a duration — and they never report
+these as errors.
+
+This skill turns those failures into executable rules (C1–C16), each with a failure
+case, a detection method, and an acceptance check. Read first, generate second.
+
+**Scope:** model-agnostic. The constraints hold regardless of which video model you use.
+The rendering section (30s planning / 15+13 segmentation) is an optional reference,
+not the point of the skill.
+
+**Layout:**
+- `SKILL.md` — the 16 constraints, failure cases, acceptance table
+- `reference/` — reading rules, bubble taxonomy, shot grammar, duration budget,
+  a two-page walkthrough, plus optional API and model-boundary notes
+- `scripts/` — duration planning, mora counting, motion metrics, F0 comparison
+- `examples/page_plan.sample.json` — machine-readable page plan with Japanese lines
+  and kana readings
+
+**Requirements:** Python 3.10+, `numpy`, `opencv-python`, `soundfile`, `scipy`,
+`ffmpeg`/`ffprobe`. Optional: `openai-whisper` for dialogue verification,
+`pykakasi` for Japanese readings.
+
+```bash
+pip install -r requirements.txt
+python scripts/plan_duration.py --target 28 --unit 30 --segment 15,13 \
+  < examples/page_plan.sample.json > plan.json
+```
+
+---
+
 ## 约束清单
 
 | 编号 | 约束 | 一句话 |
