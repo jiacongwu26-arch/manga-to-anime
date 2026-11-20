@@ -42,8 +42,9 @@ Add BGM as a separate post layer; do not rely on the video model for music.
   fixed 24 fps. Check your provider.
 - Resolution should be a multiple of 32 and close to the target aspect ratio.
 - 15s ≈ 362 frames, 30s ≈ 736 frames on H3-style models. Two 15s clips give 724
-  frames — a different count than a single 30s clip, which is one signal that the
-  long output is generated as one sequence rather than stitched.
+  frames. That mismatch is a *signal* that a 30s output may be one sequence rather
+  than two stitched clips — not proof: a server can re-encode and pad to any length.
+  Treat it as one clue among several (pricing tiers, resolution caps, seam analysis).
 
 ## Local inference notes
 

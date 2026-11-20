@@ -27,18 +27,22 @@ Density: statement 1.0 | exclamation 0.9 | question 1.1 | trailing off 0.8 | pro
 
 ### Worked example
 
-| Line | mora | Estimate |
-|---|---:|---:|
-| お母さん！ | 5 | 1.15s |
-| どうしたの？ | 5 | 1.19s |
-| 大きくなったら冒険に出るんだ！ | 17 | 2.95s |
-| あら、じゃあまずは練習を頑張らないとね。 | 20 | 3.26s |
-| それで世界を旅できるの？ | 13 | 2.44s |
-| もちろんよ。 | 5 | 1.11s |
-| もうすぐ着くわね。 | 8 | 1.54s |
-| **Total** | **73** | **13.64s** |
+| Line | mora | Raw estimate | After 1.2s floor |
+|---|---:|---:|---:|
+| お母さん！ | 5 | 1.15s | 1.20s |
+| どうしたの？ | 5 | 1.19s | 1.20s |
+| 大きくなったら冒険に出るんだ！ | 17 | 2.95s | 2.95s |
+| あら、じゃあまずは練習を頑張らないとね。 | 20 | 3.26s | 3.26s |
+| それで世界を旅できるの？ | 13 | 2.44s | 2.44s |
+| もちろんよ。 | 5 | 1.11s | 1.20s |
+| もうすぐ着くわね。 | 8 | 1.54s | 1.54s |
+| **Total** | **73** | **13.64s** | **13.79s** |
 
-Seven lines take ~13.6s of dialogue. That leaves ~14s of non-dialogue for a 28s cut.
+The raw dialogue is ~13.6s. The single-shot floor of 1.2s pushes a few short lines up,
+giving ~13.8s of dialogue for a 28s cut — leaving ~14s of non-dialogue.
+
+Inter-line beats: add 0.8s **between** lines within one shot, never for a single-line
+panel.
 
 ## Other languages
 
@@ -121,4 +125,6 @@ Compress in this order, **never touching dialogue shots**:
 - Single shot upper bound 8s (split longer ones)
 - Single shot lower bound 1.2s (shorter is unreadable)
 - Total tolerance ±0.5s
-- Segment length must equal the render duration requested from the API; shots must not straddle a segment boundary
+- A segment's content should be within ±0.5s of the render duration requested from the
+  API. If it is short, add a shot; do not stretch an existing shot or freeze a frame.
+  Shots must never straddle a segment boundary.

@@ -57,6 +57,7 @@ examples/
 #    格式见 examples/page_plan.sample.json
 
 # 2. 算时长并核对总账（缺秒会明确报出来，不会替你拉长镜头）
+#    Windows 上若 python 指向应用商店空壳，把 python 换成 py
 python scripts/plan_duration.py --target 28 --unit 30 --segment 15,13 \
   < examples/page_plan.sample.json > plan.json
 
@@ -64,6 +65,9 @@ python scripts/plan_duration.py --target 28 --unit 30 --segment 15,13 \
 python scripts/check_motion.py --input clip.mp4
 python scripts/pitch_check.py --input audio.wav --segments "0-3,3-8,8-13"
 ```
+
+`plan_duration.py` 默认 `--reactions auto`：只给**两句以上**的对话格加反应镜，每页最多 2 个。
+需要全加用 `--reactions all`，一个都不要用 `--reactions none`。
 
 ## 依赖
 

@@ -49,5 +49,31 @@
     }
    ]
   }
+ },
+ "p02": {
+  "desc": "The adult answers; the child, now grown, flies toward the destination",
+  "parsed": {
+   "panels": [
+    {
+     "content": "Adult crouches to the child's eye level and pats her head",
+     "bubbles": [
+      {"type": "speech", "speaker": "adult",
+       "text": "もちろんよ。", "text_ja": "もちろんよ。", "text_ja_kana": "もちろんよ。"}
+     ]
+    },
+    {
+     "content": "Wide shot: sky, mountains, one small figure flying on a broom",
+     "bubbles": []
+    },
+    {
+     "content": "The grown child seen from behind on a broom, hair and coat in the wind",
+     "bubbles": [
+      {"type": "speech", "speaker": "grown_child",
+       "text": "もうすぐ着くわね。", "text_ja": "もうすぐ着くわね。",
+       "text_ja_kana": "もうすぐつくわね。"}
+     ]
+    }
+   ]
+  }
  }
 }

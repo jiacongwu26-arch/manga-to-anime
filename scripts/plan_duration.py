@@ -122,7 +122,14 @@ def has_line(b, lang):
     return isinstance(t, str) and bool(t.strip())
 
 
-def build_shots(plan, page, lang):
+def build_shots(plan, page, lang, reactions="auto"):
+    """Build shots for one page.
+
+    reactions:
+      "auto" - add a reaction only when a panel has 2+ lines (a real exchange)
+      "all"  - add one after every dialogue panel (capped later at 2 per page)
+      "none" - never add reaction shots
+    """
     panels = plan.get(page, {}).get("parsed", {}).get("panels", [])
     shots = []
     for i, p in enumerate(panels):
@@ -138,11 +145,13 @@ def build_shots(plan, page, lang):
                 text, dur = bubble_line(b, lang)
                 lines.append(text)
                 d += dur
-            d += 0.8
+            d += 0.8 * max(0, len(speech) - 1)  # beats between lines only
             shots.append({"source": src, "type": "dialogue", "lines": lines,
                           "duration_s": round(min(MAX_SHOT, max(MIN_SHOT, d)), 2)})
-            shots.append({"source": src, "type": "reaction", "lines": [],
-                          "duration_s": REACTION})
+            want = reactions == "all" or (reactions == "auto" and len(speech) >= 2)
+            if want:
+                shots.append({"source": src, "type": "reaction", "lines": [],
+                              "duration_s": REACTION})
         elif any(b.get("type") == "narration" for b in other):
             b = next(x for x in other if x.get("type") == "narration")
             text, dur = bubble_line(b, lang)
@@ -153,6 +162,21 @@ def build_shots(plan, page, lang):
             shots.append({"source": src, "type": ptype, "lines": [],
                           "duration_s": BASE[ptype]})
     return shots
+
+
+def cap_reactions(shots, max_per_page=2):
+    """Enforce C15: at most `max_per_page` reaction shots on a page."""
+    notes, counts, out = [], {}, []
+    for s in shots:
+        page = s["source"].rsplit(".p", 1)[0]
+        if s["type"] == "reaction":
+            counts[page] = counts.get(page, 0) + 1
+            if counts[page] > max_per_page:
+                notes.append("%s: dropped extra reaction shot (max %d per page)"
+                             % (s["source"], max_per_page))
+                continue
+        out.append(s)
+    return out, notes
 
 
 def reconcile(shots, target):
@@ -219,6 +243,9 @@ def main():
                     help="comma-separated segment seconds, used in order")
     ap.add_argument("--pages", default=None, help="comma-separated page keys")
     ap.add_argument("--lang", choices=["ja", "zh"], default="ja")
+    ap.add_argument("--reactions", choices=["auto", "all", "none"], default="auto",
+                    help="auto: only for 2+ line exchanges; all: every dialogue panel; "
+                         "none: no reaction shots. Always capped at 2 per page.")
     args = ap.parse_args()
 
     plan = json.load(sys.stdin)
@@ -230,10 +257,13 @@ def main():
             notes.append(page + " not in plan")
             continue
         try:
-            shots.extend(build_shots(plan, page, args.lang))
+            shots.extend(build_shots(plan, page, args.lang, args.reactions))
         except ValueError as e:
             sys.stderr.write("ERROR: " + str(e) + "\n")
             sys.exit(2)
+
+    shots, cap_notes = cap_reactions(shots, 2)
+    notes.extend(cap_notes)
 
     shots, total, cut_notes = reconcile(shots, args.target)
     notes.extend(cut_notes)
@@ -245,7 +275,7 @@ def main():
         t = round(t + s["duration_s"], 2)
         s["end_s"] = t
         f = max(5, int(math.ceil(s["duration_s"] * 24)))
-        s["aligned_frames"] = f + (5 - f % 17) % 17
+        s["h3_aligned_frames"] = f + (5 - f % 17) % 17
 
     segments, seg_notes = pack_segments(shots, parse_segment_spec(args.segment))
     notes.extend(seg_notes)
@@ -257,12 +287,20 @@ def main():
         for s in seg["shots"]:
             s["segment"] = seg["segment"]
 
+    spec = parse_segment_spec(args.segment)
+    if args.target is not None and abs(sum(spec) - args.target) > 0.5:
+        notes.append("segment spec sums to %.1fs but target is %.1fs; the last segment "
+                     "is where the mismatch lands" % (sum(spec), args.target))
+    if args.unit is not None and round(t, 2) > args.unit + 0.5:
+        notes.append("total %.1fs exceeds the %.1fs planning unit" % (t, args.unit))
+
     result = {
         "total_seconds": round(t, 2),
         "target_seconds": args.target,
         "unit_seconds": args.unit,
-        "segment_spec": parse_segment_spec(args.segment),
+        "segment_spec": spec,
         "segments_count": len(segments),
+        "reactions_mode": args.reactions,
         "lang": args.lang,
         "check": "ok" if (args.target is None or abs(t - args.target) <= 0.5) else "over_or_under",
         "notes": notes,

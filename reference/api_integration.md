@@ -85,10 +85,10 @@ Plan in a 30s ledger, render as two segments:
   motion, not identity — identity still comes from `reference_image`.
 - Cut at a shot boundary so the seam lands between camera moves.
 - Both segments must use the same character references, or the face drifts.
-- If the provider rejects `reference_video` together with `reference_image`,
-  fall back to: segment 2 uses the last frame of segment 1 as `first_frame`
-  plus character refs would conflict — in that case prefer character refs and
-  seed continuity with prompt + identical camera language, and report the limitation.
+- If the provider rejects `reference_video` together with `reference_image`, do **not**
+  silently switch to `first_frame` (that drops the identity reference). Keep the
+  character references, carry continuity with identical camera language and a prompt
+  that restates the pose, and record the limitation in the output report.
 
 ## Prompt skeleton
 
